@@ -19,7 +19,7 @@
 
 (function() {
 
-// only shown in normal search page
+// only show in normal search page
 if (document.location.href.indexOf('&tbs=') != -1 || document.location.href.indexOf('&tbm=') != -1) return; 
 
 //  ===Config START | 设置开始===
