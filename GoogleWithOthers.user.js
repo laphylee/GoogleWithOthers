@@ -3,6 +3,7 @@
 // @description    Show results from Baidu, Bing and others in Google web search. 
 // @namespace      https://greasyfork.org/users/51706
 // @include        http*://www.google.com*/search?*
+// @include        http*://www.google.co*/search?*
 // @license        MPL
 // @grant          GM_log
 // @grant          GM_xmlhttpRequest
@@ -22,7 +23,7 @@
 (function () {
 
     // only shown in normal search page
-    if (document.location.href.indexOf('&tbs=') != -1 || document.location.href.indexOf('&tbm=') != -1) return;
+    //if (document.location.href.indexOf('&tbs=') != -1 || document.location.href.indexOf('&tbm=') != -1) return;
 
     //  ===Config START | 设置开始===
 
@@ -48,7 +49,7 @@
     // Select which engines' results will be obtained from | 设置外部搜索引擎。
     // Structure: Al_xSearch[x] = [[0],[1],[2],[3],[4],[5]];
     // Rules: Al_xSearch[x][0] - the name of the engine | 搜索引擎的名字。
-    //		  Al_xSearch[x][1] - switch, 1-on, 0-off. | 开关，1－启用，0－禁用。
+    //		  Al_xSearch[x][1] - switch, 0: off. 1. show link. 2. show results.
     //		  Al_xSearch[x][2] - the id of the box to contain results | 结果框的 ID。
     //		  Al_xSearch[x][3] - the query Url of the engine | 搜索引擎的搜索 Url。
     //		  Al_xSearch[x][4] - the xpath to find a result | 搜索结果的 xpath。
@@ -57,20 +58,25 @@
 
 
 
-    Al_xSearch.push(['Baidu', 1, "baiduResult", 'http://www.baidu.com/s?wd=--keyword--&ie=utf-8', '//*[@id="--i--"]', 'em']);
+    Al_xSearch.push(['Baidu', 2, "baiduResult", 'http://www.baidu.com/s?wd=--keyword--&ie=utf-8', '//*[@id="--i--"]', 'em']);
     Al_xSearch.push(['Youdao', 0, "youdaoResult", 'http://www.youdao.com/search?q=--keyword--', '//ol[@id="results"]/li[--i--]', 'span.hl']);
     Al_xSearch.push(['360', 0, "360Result", 'http://www.haosou.com/s?ie=utf-8&q=--keyword--', '//ul[@id="m-result"]/li[--i--]', 'em']);
     Al_xSearch.push(['Sogou', 0, "sogouResult", 'http://www.sogou.com/web?query=--keyword--&ie=utf8&pid=sogou-netb-bd85282513da4089-9039', '//div[@class="results"]/div[--i--]', 'em']);
-    Al_xSearch.push(['Bing', 0, "bingResult", 'http://www.bing.com/search?q=--keyword--', '//li[@class="b_algo"][--i--]', 'strong']);
+    Al_xSearch.push(['Bing', 1, "bingResult", 'http://www.bing.com/search?q=--keyword--', '//li[@class="b_algo"][--i--]', 'strong']);
     Al_xSearch.push(['GoogleCN', 0, "gcnResult", 'http://www.google.com.hk/search?q=--keyword--', '//div[@id="ires"]/ol/li[--i--]', 'em']);
     Al_xSearch.push(['ZSWeibo', 0, "weiboResult", 'http://t.zhongsou.com/wb?w=--keyword--', '//div[@class="main_scenery_left"]/div[@class="godreply_on"][--i--]', 'font[color="red"]']);
+    Al_xSearch.push(['Zhihu', 1, "zhihuResult", 'https://www.zhihu.com/search?q=--keyword--', '(//li[@class="item clearfix"])[--i--]', 'em']);
 
     //  ===Config END | 设置结束===
     var isHash = !!document.location.hash;
 
-    setTimeout(go, 1000);
+		$("<a onclick='go()'>Expand</a>").appendTo("body");
+
+    //setTimeout(go, 1000);
+		go();	
 
     function go() {
+			alert("a");
 
         if (hideGoogleLogo) {
             $('#logo img').css("visibility", "hidden");
@@ -78,10 +84,15 @@
 
         // rebuild array
         var A_xSearch = new Array();
+				var searchLinkArray = new Array();
         for (var l = 0, m = 0; l < Al_xSearch.length; l++) { //log('53:'+l+','+m);
-            if (!Al_xSearch[l][1]) continue;
-            A_xSearch[m] = new Array(Al_xSearch[l][0], Al_xSearch[l][1], Al_xSearch[l][2], Al_xSearch[l][3], Al_xSearch[l][4], Al_xSearch[l][5]);  //log('59:'+Al_xSearch[l][3]+','+A_xSearch[m][3]);
-            m += 1;
+						var enable = Al_xSearch[l][1];
+            if (!enable) continue;
+						if(enable==2) {
+							A_xSearch[m] = new Array(Al_xSearch[l][0], Al_xSearch[l][1], Al_xSearch[l][2], Al_xSearch[l][3], Al_xSearch[l][4], Al_xSearch[l][5]);  //log('59:'+Al_xSearch[l][3]+','+A_xSearch[m][3]);
+							m += 1;
+						}
+						searchLinkArray.push(Al_xSearch[l]);
         }
         var A_xSearch_l = A_xSearch.length; //log('61:'+A_xSearch_l);
 
@@ -102,10 +113,6 @@
         }
         //log('115:'+googlekeyword);
         //GM_log(googlekeyword);
-
-        if (!showOnEnglishQuery && isASCII(decodeURIComponent(googlekeyword))) {
-            return;
-        }
 
 
         // Prepare frame 0
@@ -163,6 +170,14 @@
         var A_hili_s = new Array();
         var A_xS_box = new Array();
 
+			console.log(searchLinkArray);
+			for(var i=0;i<searchLinkArray.length;i++)
+			{
+                var entry = searchLinkArray[i];
+                console.log(entry[3]);
+				entry[3]=entry[3].replace('--keyword--', googlekeyword);
+			}
+
         for (var a = 0; a < A_xSearch_l; a++) {
             A_xS_box[a] = new Array();
             if (A_xSearch[a][0] == 'ZSWeibo') {
@@ -203,12 +218,27 @@
         var gooRes = [], gooRelnkh = [], gooResNo = 0;
         var speIDs = /imagebox_bigimages|imagebox|newsbox|videobox|blogbox/;
         for (h = 0; h < lis.snapshotLength; h++) {
-            if (speIDs.test(lis.snapshotItem(h).id)) continue;
-            gooRes.push(lis.snapshotItem(h));
+            var resultNode = lis.snapshotItem(h);
+            if (speIDs.test(resultNode.id)) continue;
+            gooRes.push(resultNode);
             gooResNo++;
-            lis.snapshotItem(h).title = '第 ' + gooResNo + ' 结果';
-            var lnks = lis.snapshotItem(h).getElementsByTagName('a');
-            gooRelnkh.push((lnks[0].href) ? lnks[0].href.toLowerCase() : lnks[1].href.toLowerCase()); //deal with my Google Link Preview [hzhbest mod]
+            resultNode.title = '第 ' + gooResNo + ' 结果';
+            var lnks = resultNode.getElementsByTagName('a');
+            var link = (lnks[0].href) ? lnks[0] : lnk[1]; //deal with my Google Link Preview [hzhbest mod]
+            gooRelnkh.push(link.href.toLowerCase());
+
+						if(gooResNo<=10) {
+							if(gooResNo==10) {
+								gooResNo=0;
+							}
+							var citeNode = $(resultNode).find("cite");
+							$(`<span>[${gooResNo}] </span>`).insertBefore(citeNode);
+							$(link).attr("id", `gooResNo${gooResNo}`);
+						}
+        }
+        
+        if (!showOnEnglishQuery && isASCII(decodeURIComponent(googlekeyword))) {
+            return;
         }
 
         // Prepare frame 2
@@ -262,6 +292,8 @@
                 } else {  //log(sname+" j "+j);
                     //Weibo snapshot fix
                     if (sname == 'ZSWeibo') fixweibo(_h_re);
+                    
+                    if (sname == 'Zhihu') fixZhihu(_h_re);
 
                     //Youdao snapshot fix
                     if (sname == 'Youdao') fixyoudao(_h_re);
@@ -282,6 +314,7 @@
                     //if (sname == 'Baidu' && _h_re.className == 'result-op') continue;
                     if (sname == 'Baidu' && _h_re.getAttribute('mu') && _h_re.getAttribute('mu').indexOf('app.baidu.com/') != -1) continue;
 
+                    //debugger;
                     _result[j] = getoutterHTML(_h_re);
 
                     // check link
@@ -323,6 +356,16 @@
             b = creaElemIn('div', dest);
             b.id = _ID;
             b.setAttribute("style", bstyle);
+
+						var searchLinkDiv = creaElemIn('div', b);
+						
+						for(var i=0;i<searchLinkArray.length;i++) {
+                            var entry=searchLinkArray[i];
+							var link = creaElemIn('a', searchLinkDiv);
+							link.href=entry[3];
+							addtext(link,entry[0]+"  ");
+                            link.setAttribute('target', '_blank');
+						}
 
             //engine frame
             var c_first = true;
@@ -456,6 +499,15 @@
                     }
                 }
             }
+        }
+        
+        
+        function fixZhihu(_resultcontent)
+        {
+            debugger;
+            var link = $("div.title", $(_resultcontent))[0].outerHTML;
+            var vote = $("a.zm-item-vote-count", $(_resultcontent))[0].outerHTML;
+            _resultcontent.innerHTML= vote+link;
         }
 
         // "修复"GoogleCN链接
