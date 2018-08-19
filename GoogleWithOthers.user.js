@@ -1,12 +1,13 @@
 // ==UserScript==
 // @name           Google with others
-// @description    Show results from Baidu, Bing and others in Google web search. 
+// @description    Show results from Baidu, Bing and others in Google web search.
 // @namespace      https://greasyfork.org/users/51706
 // @include        http*://www.google.com*/search?*
 // @include        http*://www.google.co*/search?*
-// @license        MPL
 // @grant          GM_log
 // @grant          GM_xmlhttpRequest
+// @grant          GM_addStyle
+// @license        MPL
 // @require        http://code.jquery.com/jquery-2.2.4.js
 // @version        1.0.0
 // ==/UserScript==
@@ -21,9 +22,11 @@
 //Open other search page in new tab
 
 (function () {
+	//debugger;
+	//alert("debug");
 
     // only shown in normal search page
-    //if (document.location.href.indexOf('&tbs=') != -1 || document.location.href.indexOf('&tbm=') != -1) return;
+    if (document.location.href.indexOf('&tbs=') != -1 || document.location.href.indexOf('&tbm=') != -1) return;
 
     //  ===Config START | 设置开始===
 
@@ -35,7 +38,7 @@
     if (onlyPageOne && _q.indexOf('&start=') >= 0 && _q.indexOf('&start=0') < 0) return;
 
     // Show how many top results | 设置显示头几个搜索结果。
-    var resultNumber = 8;
+    var resultNumber = 10;
 
     // Wait for how many minisecond to obtain results | 设置获取搜索结果超时时间（毫秒）。
     var resultTimeout = 30000;
@@ -54,29 +57,48 @@
     //		  Al_xSearch[x][3] - the query Url of the engine | 搜索引擎的搜索 Url。
     //		  Al_xSearch[x][4] - the xpath to find a result | 搜索结果的 xpath。
     //		  Al_xSearch[x][5] - the highlight pattern (selector) | 高亮部分的格式（选择器）。
-    //		  x - the displaying order. | 显示顺序。	
+    //		  x - the displaying order. | 显示顺序。
 
 
 
-    Al_xSearch.push(['Baidu', 2, "baiduResult", 'http://www.baidu.com/s?wd=--keyword--&ie=utf-8', '//*[@id="--i--"]', 'em']);
-    Al_xSearch.push(['Youdao', 0, "youdaoResult", 'http://www.youdao.com/search?q=--keyword--', '//ol[@id="results"]/li[--i--]', 'span.hl']);
-    Al_xSearch.push(['360', 0, "360Result", 'http://www.haosou.com/s?ie=utf-8&q=--keyword--', '//ul[@id="m-result"]/li[--i--]', 'em']);
-    Al_xSearch.push(['Sogou', 0, "sogouResult", 'http://www.sogou.com/web?query=--keyword--&ie=utf8&pid=sogou-netb-bd85282513da4089-9039', '//div[@class="results"]/div[--i--]', 'em']);
-    Al_xSearch.push(['Bing', 1, "bingResult", 'http://www.bing.com/search?q=--keyword--', '//li[@class="b_algo"][--i--]', 'strong']);
-    Al_xSearch.push(['GoogleCN', 0, "gcnResult", 'http://www.google.com.hk/search?q=--keyword--', '//div[@id="ires"]/ol/li[--i--]', 'em']);
-    Al_xSearch.push(['ZSWeibo', 0, "weiboResult", 'http://t.zhongsou.com/wb?w=--keyword--', '//div[@class="main_scenery_left"]/div[@class="godreply_on"][--i--]', 'font[color="red"]']);
-    Al_xSearch.push(['Zhihu', 1, "zhihuResult", 'https://www.zhihu.com/search?q=--keyword--', '(//li[@class="item clearfix"])[--i--]', 'em']);
+    Al_xSearch.push(['Baidu', 2, "baiduResult", 'http://www.baidu.com/s?wd=--keyword--&ie=utf-8', '//*[@id="--i--"]', 'em', "http://icons.iconarchive.com/icons/uiconstock/socialmedia/512/Baidu-icon.png"]);
+    Al_xSearch.push(['Youdao', 0, "youdaoResult", 'http://www.youdao.com/search?q=--keyword--', '//ol[@id="results"]/li[--i--]', 'span.hl', '']);
+    Al_xSearch.push(['360', 0, "360Result", 'http://www.haosou.com/s?ie=utf-8&q=--keyword--', '//ul[@id="m-result"]/li[--i--]', 'em','']);
+    Al_xSearch.push(['Sogou', 0, "sogouResult", 'http://www.sogou.com/web?query=--keyword--&ie=utf8&pid=sogou-netb-bd85282513da4089-9039', '//div[@class="results"]/div[--i--]', 'em','']);
+    Al_xSearch.push(['Bing', 1, "bingResult", 'http://www.bing.com/search?q=--keyword--', '//li[@class="b_algo"][--i--]', 'strong', 'http://cdn2.iconfinder.com/data/icons/social-icons-color/512/bing-128.png']);
+    Al_xSearch.push(['GoogleCN', 0, "gcnResult", 'http://www.google.com.hk/search?q=--keyword--', '//div[@id="ires"]/ol/li[--i--]', 'em','']);
+    Al_xSearch.push(['ZSWeibo', 0, "weiboResult", 'http://t.zhongsou.com/wb?w=--keyword--', '//div[@class="main_scenery_left"]/div[@class="godreply_on"][--i--]', 'font[color="red"]','']);
+    Al_xSearch.push(['Zhihu', 1, "zhihuResult", 'https://www.zhihu.com/search?q=--keyword--', '(//li[@class="item clearfix"])[--i--]', 'em', 'https://lh3.googleusercontent.com/DGTrKRjK1hlle1WG-MMYtdsiNkOe0SbLlILHKczqYqigzuWF2pgB_rdFvt-Q2rBaGhE=w300']);
 
     //  ===Config END | 设置结束===
+
+	GM_addStyle(`
+.ordinal {
+	font-size:small;
+	color:#808080;
+}
+.icon {
+height: 16px;
+width: 16px;
+margin: 0 4px 0 4px;
+}
+.icontext {
+font-size: 16px;
+}
+#searchBanner a {
+text-decoration: none;
+}
+#
+`);
+
     var isHash = !!document.location.hash;
 
-		$("<a onclick='go()'>Expand</a>").appendTo("body");
+		//$("<a onclick='go()'>Expand</a>").appendTo("body");
 
     //setTimeout(go, 1000);
-		go();	
+		go();
 
     function go() {
-			alert("a");
 
         if (hideGoogleLogo) {
             $('#logo img').css("visibility", "hidden");
@@ -116,16 +138,21 @@
 
 
         // Prepare frame 0
-        var gcnt = document.evaluate('//div[@id="cnt"]', document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null).snapshotItem(0);
-        if (!gcnt) { setTimeout(go, 300); return; }
+        //var gcnt = document.evaluate('//div[@id="cnt"]', document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null).snapshotItem(0);
+        //if (!gcnt) { setTimeout(go, 300); return; }
         var googlecol = document.evaluate('//div[@id="center_col"]', document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null).snapshotItem(0);
         var gdivs = document.evaluate('//div[@class="s"]', document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null).snapshotItem(0);
         contentwidth = (!!gdivs) ? gdivs.offsetWidth : 500;  //log(contentwidth);
-        var b_width = Math.min(504, gcnt.offsetWidth - (googlecol.offsetLeft + contentwidth + 32 + 30));
-        googlecol.setAttribute('style', 'margin-right: ' + (b_width + 15) + 'px !important;');
+        //var b_width = Math.min(504, gcnt.offsetWidth - (googlecol.offsetLeft + contentwidth + 32 + 30));
+		googleframe=document.querySelector('#rcnt');
+        googleframe.style.position = 'relative'; //make "resultplus" absolute node based on this node
+		googleframe.style.width='100vw'; //make it 100% viewpoint width.
+		b_right=50; //right margin for absolute element
+		b_width=Math.min(600,googleframe.offsetWidth-googlecol.offsetLeft-googlecol.offsetWidth-b_right);
+        //googlecol.setAttribute('style', 'margin-right: ' + (b_width + 15) + 'px !important;');
 
         // Style sheets
-        var bstyle = 'position:absolute;top:0px;right:-150px;background:white;z-index:10;width:' + b_width + 'px;';
+        var bstyle = 'position:absolute;top:0px;background:white;z-index:10;width:' + b_width + 'px;right:'+b_right+'px;';
         var cstyle = 'border-top:1px solid #7799cc;background:#aaccff;';
         var close_style = _xID + ' .close{float:right;padding:0 10px;}'
             + _xID + ' .close:hover{outline:1px solid #731616;outline-offset:-1px;background-color:#F28E8E!important;color:#731616!important;}';
@@ -154,7 +181,7 @@
             + _xID + ' li>div, ' + _xID + ' li>p {font-size: small;}';
         var mat_style = _xID + ' div._match {background: #eee; background:-moz-linear-gradient(top, #eee, white); background:-webkit-gradient(linear, 0 0, 0 100%, from(#eee), to(white)); max-height:1.1em;}' + _xID + ' div._match:hover{max-height: 1000px;}';
         var gs_style = /*Google Special*/'.GoogleSpecial div.newsimg>a>div{position:relative!important;}';
-        var bd_style = /*Baidu link BG img*/'div[id^="baiduResult_"]>div{padding: 5px 0 8px 13px !important;} div[id^="baiduResult_"] h3{margin-left:-8px;line-height:1.3em;} div[id^="baiduResult_"] .favurl{background-position: left center;background-repeat: no-repeat; padding-left: 16px;} div[id^="baiduResult_"] img.c-img, div[id^="baiduResult_"] div.c-row div.c-span6, div[id^="baiduResult_"] div[id^="tools_"].c-tools{display:none!important;}';
+        var bd_style = /*Baidu lenk BG img*/'div[id^="baiduResult_"]>div{padding: 5px 0 8px 13px !important;} div[id^="baiduResult_"] h3{margin-left:-8px;line-height:1.3em;} div[id^="baiduResult_"] .favurl{background-position: left center;background-repeat: no-repeat; padding-left: 16px;} div[id^="baiduResult_"] img.c-img, div[id^="baiduResult_"] div.c-row div.c-span6, div[id^="baiduResult_"] div[id^="tools_"].c-tools{display:none!important;}';
         var bg_style = /*Bing style*/'div[id^="bingResult_"] .crch, div[id^="bingResult"] .sb_tsuf{display:none!important;} h2{margin:5px 0; font-size: 13pt !important; font-weight: 400 !important;}';
         var yd_style = /*Youdao style*/'div[id^="youdaoResult_"] .imgbox, div[id^="youdaoResult_"] div.play-icon, div[id^="youdaoResult_"] div.play-bk, div.img{display:none!important;} div[id^="youdaoResult_"] .info .details{margin-left:0px!important;} div[id^="youdaoResult_"] div.intro-des{background:white;} div.floatright{margin-left: 0px !important;}';
         var sg_style = /*Sogou style*/'div[id^="sogouResult_"]>div {padding: 7px 0 8px 13px !important;background-image:none;} div[id^="sogouResult_"]>div>h3 {margin-left:-8px;} div[id^="sogouResult_"] .tit-ico {background-position: left 1px;background-repeat: no-repeat;padding-left: 20px;}';
@@ -163,8 +190,7 @@
 
 
         // Prepare frame 1
-        var googleframe = document.evaluate('//div[@id="rcnt"]', document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null).snapshotItem(0);
-        googleframe.style.position = 'relative';
+        //var googleframe = document.evaluate('//div[@id="rcnt"]', document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null).snapshotItem(0);
         var googlestyle = '#res>h2+div,#res>div.e,div#navcnt,div.clr{max-width: 840px !important;}#res{max-width:1400px!important;}#iur{height:auto!important;}span.bl{display:none!important;}span.gl{white-space:normal!important;}#nyc{z-index:11!important;}.ds{z-index:9!important;}.mw{max-width:95%;}';
 
         var A_hili_s = new Array();
@@ -232,14 +258,16 @@
 								gooResNo=0;
 							}
 							var citeNode = $(resultNode).find("cite");
-							$(`<span>[${gooResNo}] </span>`).insertBefore(citeNode);
+							$(`<span class='ordinal'>[${gooResNo}] </span>`).insertBefore(citeNode);
 							$(link).attr("id", `gooResNo${gooResNo}`);
 						}
         }
-        
+
+        /*
         if (!showOnEnglishQuery && isASCII(decodeURIComponent(googlekeyword))) {
             return;
         }
+        */
 
         // Prepare frame 2
         resultbox(googleframe, A_xSearch_l);
@@ -292,7 +320,7 @@
                 } else {  //log(sname+" j "+j);
                     //Weibo snapshot fix
                     if (sname == 'ZSWeibo') fixweibo(_h_re);
-                    
+
                     if (sname == 'Zhihu') fixZhihu(_h_re);
 
                     //Youdao snapshot fix
@@ -314,12 +342,18 @@
                     //if (sname == 'Baidu' && _h_re.className == 'result-op') continue;
                     if (sname == 'Baidu' && _h_re.getAttribute('mu') && _h_re.getAttribute('mu').indexOf('app.baidu.com/') != -1) continue;
 
-                    //debugger;
+					//Add ordinal text and element id for the first link
+					var link = $(_h_re).find('a:first');
+					var id = (i+1)%10;
+					link.attr('id','newResult_'+id);
+					$(`<span class='ordinal'>[${id}]</span>`).insertAfter(link);
+
                     _result[j] = getoutterHTML(_h_re);
 
                     // check link
                     _resultLinks = _h_re.getElementsByTagName('a');
                     if (!_resultLinks[0]) continue;
+                    //debugger;
                     var _resultLink = (_resultLinks[0].href) ? _resultLinks[0] : _resultLinks[1]; //deal with my Google Link Preview [hzhbest mod]
                     if (_resultLink) {
                         _resultLinkHref = _resultLink.href.toLowerCase();
@@ -356,15 +390,16 @@
             b = creaElemIn('div', dest);
             b.id = _ID;
             b.setAttribute("style", bstyle);
+            if(!showOnEnglishQuery && isASCII(decodeURIComponent(googlekeyword))) {
+                b.style.display= "none";
+            }
 
-						var searchLinkDiv = creaElemIn('div', b);
-						
+						var searchBannerDiv = creaElemIn('div', b);
+			searchBannerDiv.id = "searchBanner";
+
 						for(var i=0;i<searchLinkArray.length;i++) {
-                            var entry=searchLinkArray[i];
-							var link = creaElemIn('a', searchLinkDiv);
-							link.href=entry[3];
-							addtext(link,entry[0]+"  ");
-                            link.setAttribute('target', '_blank');
+							var entry=searchLinkArray[i];
+							$(`<a target='_blank' href='${entry[3]}'><img class='icon' src='${entry[6]}'/><span class='icontext'>${entry[0]}</icontext></a>`).appendTo($(searchBannerDiv));
 						}
 
             //engine frame
@@ -433,7 +468,8 @@
 
         // Get full HTML nodes in string
         function getoutterHTML(elem) {
-            var a = elem.attributes, str = "<" + elem.tagName, i = 0; for (; i < a.length; i++)
+            var a = elem.attributes, str = "<" + elem.tagName, i = 0;
+			for (; i < a.length; i++)
                 if (a[i].specified)
                     str += " " + a[i].name + '="' + a[i].value + '"';
             if (!canHaveChildren(elem))
@@ -500,8 +536,8 @@
                 }
             }
         }
-        
-        
+
+
         function fixZhihu(_resultcontent)
         {
             debugger;
@@ -545,7 +581,7 @@
         function moveGoogleSpecialResult() {
             var sb = b.insertBefore(document.createElement('div'), b.firstChild);
             sb.className = 'GoogleSpecial';
-            var spReIDs = ['imagebox_bigimages', 'imagebox', 'newsbox', 'videobox', 'blogbox']; //lclbox, 
+            var spReIDs = ['imagebox_bigimages', 'imagebox', 'newsbox', 'videobox', 'blogbox']; //lclbox,
             for (i = 0; i < spReIDs.length; i++) {
                 var sr = document.getElementById(spReIDs[i]);
                 if (sr) {
@@ -589,7 +625,7 @@
 
 
         // GB编码
-        // GB2312 to UTF-8 function set; 
+        // GB2312 to UTF-8 function set;
         function urlEncode(str) {
 
             var UnicodeChr = function () {
@@ -675,4 +711,5 @@
     }
 
 })();
+
 
