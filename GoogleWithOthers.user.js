@@ -45,7 +45,7 @@
 
     var showOnEnglishQuery = false;
 
-    var hideGoogleLogo = true;
+    var hideGoogleLogo = false;
 
     var Al_xSearch = [];
 
@@ -61,11 +61,11 @@
 
 
 
-    Al_xSearch.push(['Baidu', 2, "baiduResult", 'http://www.baidu.com/s?wd=--keyword--&ie=utf-8', '//*[@id="--i--"]', 'em', "http://icons.iconarchive.com/icons/uiconstock/socialmedia/512/Baidu-icon.png"]);
-    Al_xSearch.push(['Youdao', 0, "youdaoResult", 'http://www.youdao.com/search?q=--keyword--', '//ol[@id="results"]/li[--i--]', 'span.hl', '']);
+    Al_xSearch.push(['Baidu', 2, "baiduResult", 'https://www.baidu.com/s?wd=--keyword--&ie=utf-8', '//*[@id="--i--"]', 'em', "https://icons.iconarchive.com/icons/uiconstock/socialmedia/512/Baidu-icon.png"]);
+    Al_xSearch.push(['Youdao', 0, "youdaoResult", 'http://www.youdao.com/sealrch?q=--keyword--', '//ol[@id="results"]/li[--i--]', 'span.hl', '']);
     Al_xSearch.push(['360', 0, "360Result", 'http://www.haosou.com/s?ie=utf-8&q=--keyword--', '//ul[@id="m-result"]/li[--i--]', 'em','']);
     Al_xSearch.push(['Sogou', 0, "sogouResult", 'http://www.sogou.com/web?query=--keyword--&ie=utf8&pid=sogou-netb-bd85282513da4089-9039', '//div[@class="results"]/div[--i--]', 'em','']);
-    Al_xSearch.push(['Bing', 1, "bingResult", 'http://www.bing.com/search?q=--keyword--', '//li[@class="b_algo"][--i--]', 'strong', 'http://cdn2.iconfinder.com/data/icons/social-icons-color/512/bing-128.png']);
+    Al_xSearch.push(['Bing', 1, "bingResult", 'http://www.bing.com/search?q=--keyword--', '//li[@class="b_algo"][--i--]', 'strong', 'https://cdn2.iconfinder.com/data/icons/social-icons-color/512/bing-128.png']);
     Al_xSearch.push(['GoogleCN', 0, "gcnResult", 'http://www.google.com.hk/search?q=--keyword--', '//div[@id="ires"]/ol/li[--i--]', 'em','']);
     Al_xSearch.push(['ZSWeibo', 0, "weiboResult", 'http://t.zhongsou.com/wb?w=--keyword--', '//div[@class="main_scenery_left"]/div[@class="godreply_on"][--i--]', 'font[color="red"]','']);
     Al_xSearch.push(['Zhihu', 1, "zhihuResult", 'https://www.zhihu.com/search?q=--keyword--', '(//li[@class="item clearfix"])[--i--]', 'em', 'https://lh3.googleusercontent.com/DGTrKRjK1hlle1WG-MMYtdsiNkOe0SbLlILHKczqYqigzuWF2pgB_rdFvt-Q2rBaGhE=w300']);
@@ -181,7 +181,8 @@ text-decoration: none;
             + _xID + ' li>div, ' + _xID + ' li>p {font-size: small;}';
         var mat_style = _xID + ' div._match {background: #eee; background:-moz-linear-gradient(top, #eee, white); background:-webkit-gradient(linear, 0 0, 0 100%, from(#eee), to(white)); max-height:1.1em;}' + _xID + ' div._match:hover{max-height: 1000px;}';
         var gs_style = /*Google Special*/'.GoogleSpecial div.newsimg>a>div{position:relative!important;}';
-        var bd_style = /*Baidu lenk BG img*/'div[id^="baiduResult_"]>div{padding: 5px 0 8px 13px !important;} div[id^="baiduResult_"] h3{margin-left:-8px;line-height:1.3em;} div[id^="baiduResult_"] .favurl{background-position: left center;background-repeat: no-repeat; padding-left: 16px;} div[id^="baiduResult_"] img.c-img, div[id^="baiduResult_"] div.c-row div.c-span6, div[id^="baiduResult_"] div[id^="tools_"].c-tools{display:none!important;}';
+//      var bd_style = /*Baidu lenk BG img*/'div[id^="baiduResult_"]>div{padding: 5px 0 8px 13px !important;} div[id^="baiduResult_"] h3{margin-left:-8px;line-height:1.3em;} div[id^="baiduResult_"] .favurl{background-position: left center;background-repeat: no-repeat; padding-left: 16px;} div[id^="baiduResult_"] img.c-img, div[id^="baiduResult_"] div.c-row div.c-span6, div[id^="baiduResult_"] div[id^="tools_"].c-tools{display:none!important;}';
+        var bd_style = /*Baidu lenk BG img*/'div[id^="baiduResult_"]>div{padding: 5px 0 8px 13px !important;} div[id^="baiduResult_"] h3{margin-left:-8px;line-height:1.3em;} div[id^="baiduResult_"] .favurl{background-position: left center;background-repeat: no-repeat; padding-left: 16px;} div[id^="baiduResult_"] img.c-img, div[id^="baiduResult_"] div.c-row div.c-span6, div[id^="baiduResult_"] div[id^="tools_"].c-tools{display:none!important;} .c-img img{width:100%} .c-gap-left{margin-left:12px} .c-gap-right-xsmall{margin-right:4px} .item_3WKCf { display: inline-block; margin-left: 16px; }';
         var bg_style = /*Bing style*/'div[id^="bingResult_"] .crch, div[id^="bingResult"] .sb_tsuf{display:none!important;} h2{margin:5px 0; font-size: 13pt !important; font-weight: 400 !important;}';
         var yd_style = /*Youdao style*/'div[id^="youdaoResult_"] .imgbox, div[id^="youdaoResult_"] div.play-icon, div[id^="youdaoResult_"] div.play-bk, div.img{display:none!important;} div[id^="youdaoResult_"] .info .details{margin-left:0px!important;} div[id^="youdaoResult_"] div.intro-des{background:white;} div.floatright{margin-left: 0px !important;}';
         var sg_style = /*Sogou style*/'div[id^="sogouResult_"]>div {padding: 7px 0 8px 13px !important;background-image:none;} div[id^="sogouResult_"]>div>h3 {margin-left:-8px;} div[id^="sogouResult_"] .tit-ico {background-position: left 1px;background-repeat: no-repeat;padding-left: 20px;}';
@@ -330,7 +331,7 @@ text-decoration: none;
                     if (sname == 'GoogleCN') fixgcn(_h_re);
 
                     //Baidu url fix
-                    if (sname == 'Baidu') fixbd(_h_re);
+                    //if (sname == 'Baidu') fixbd(_h_re);
 
                     //Bing img url fix
                     if (sname == 'Bing') {
@@ -339,7 +340,8 @@ text-decoration: none;
                     }
 
                     //Baidu result filter
-                    //if (sname == 'Baidu' && _h_re.className == 'result-op') continue;
+										//Remove 热搜 and 相关搜索
+                    if (sname == 'Baidu' && _h_re.className.includes('result-op')) continue;
                     if (sname == 'Baidu' && _h_re.getAttribute('mu') && _h_re.getAttribute('mu').indexOf('app.baidu.com/') != -1) continue;
 
 					//Add ordinal text and element id for the first link
@@ -710,6 +712,13 @@ text-decoration: none;
         return /^[\x00-\x7F]*$/.test(str);
     }
 
+    function displaybaidu() {
+		var area = document.querySelector("#resultPlus");
+		area.style.display = (area.style.display == 'none') ? 'block' : 'none';
+}
+
+
 })();
+
 
 
