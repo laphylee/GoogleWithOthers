@@ -9,8 +9,9 @@
 // @grant          GM_addStyle
 // @license        MPL
 // @require        http://code.jquery.com/jquery-2.2.4.js
-// @version        1.2
+// @version        1.3: Add more search links: Red, Detao, etc.
 // ==/UserScript==
+
 
 //changes with original script_1.5.1:
 //change @include url pattern
@@ -57,6 +58,7 @@
     //		  Al_xSearch[x][3] - the query Url of the engine | 搜索引擎的搜索 Url。
     //		  Al_xSearch[x][4] - the xpath to find a result | 搜索结果的 xpath。
     //		  Al_xSearch[x][5] - the highlight pattern (selector) | 高亮部分的格式（选择器）。
+    //		  Al_xSearch[x][6] - icon path。
     //		  x - the displaying order. | 显示顺序。
 
 
@@ -69,6 +71,10 @@
     Al_xSearch.push(['GoogleCN', 0, "gcnResult", 'http://www.google.com.hk/search?q=--keyword--', '//div[@id="ires"]/ol/li[--i--]', 'em','']);
     Al_xSearch.push(['ZSWeibo', 0, "weiboResult", 'http://t.zhongsou.com/wb?w=--keyword--', '//div[@class="main_scenery_left"]/div[@class="godreply_on"][--i--]', 'font[color="red"]','']);
     Al_xSearch.push(['Zhihu', 1, "zhihuResult", 'https://www.zhihu.com/search?q=--keyword--', '(//li[@class="item clearfix"])[--i--]', 'em', 'https://lh3.googleusercontent.com/DGTrKRjK1hlle1WG-MMYtdsiNkOe0SbLlILHKczqYqigzuWF2pgB_rdFvt-Q2rBaGhE=w300']);
+    Al_xSearch.push(['Red', 1, "xiaohongshuResult", 'https://www.xiaohongshu.com/search_result?keyword=--keyword--&type=51', '', '', 'https://pp.myapp.com/ma_icon/0/icon_10868231_1703585022/256']);
+    Al_xSearch.push(['Dedao', 1, "dedaoResult", 'https://www.dedao.cn/search/result?q=--keyword--', '', '', 'https://android-artworks.25pp.com/fs08/2023/11/16/10/125_54f9b6257da5b016605c385d8d0e3bdc_con_130x130.png']);
+    Al_xSearch.push(['Bili', 1, "biliResult", 'https://search.bilibili.com/all?keyword=--keyword--', '', '', 'https://pp.myapp.com/ma_icon/0/icon_52422959_1689159853/256']);
+
 
     //  ===Config END | 设置结束===
 
